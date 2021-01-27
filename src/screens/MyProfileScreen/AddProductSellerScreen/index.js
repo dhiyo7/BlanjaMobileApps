@@ -386,7 +386,7 @@
 
 // import React, {Component, useEffect, useState} from 'react';
 // import {StyleSheet, View, ScrollView, Image, TouchableOpacity, Button} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Image,
@@ -399,15 +399,15 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 // import Text from '../../../components/Text';
-import {ButtonSubmit} from '../../../components/index';
+import { ButtonSubmit } from '../../../components/index';
 // import {Picker} from '@react-native-picker/picker';
 import FormInput from 'react-native-outline-input';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
-import {Picker} from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
 import ActionSheet from 'react-native-actions-sheet';
-import {API_URL} from '@env';
-import {createRef} from 'react';
+import { API_URL } from '@env';
+import { createRef } from 'react';
 // import ImagePicker from 'react-native-image-picker';
 // import ImagePicker from 'react-native-image-crop-picker';
 // import { Picker } from 'react-native-picker/picker';
@@ -418,7 +418,7 @@ const colorSheetRef = createRef();
 // const conditionSheetRef = createRef();
 // const statusSheetRef = createRef();
 
-const AddProduct = ({navigation}) => {
+const AddProduct = ({ navigation }) => {
   useEffect(() => {
     getCategory();
     getSize();
@@ -428,13 +428,67 @@ const AddProduct = ({navigation}) => {
   }, []);
 
   const BASE_URL = `${API_URL}`;
+  const ashiap = [
+    {
+      id: 1,
+      size: "S"
+    },
+    {
+      id: 2,
+      size: "M"
+    },
+    {
+      id: 3,
+      size: "L"
+    },
+    {
+      id: 4,
+      size: "XL"
+    },
+    {
+      id: 5,
+      size: "XXL"
+    },
+  ]
+
+  const shouldCheckedOnStyle = (id) => {
+    const result = size.find(s => s.id == id && s.is_selected)
+    return result ? styles.selectedSize : styles.notSelectedSize
+  }
+
+  const addOrRemoveSelected = (id) => {
+    const result = size.find(s => s.id == id)
+    if (result.is_selected) {
+      const temp = size
+      const index = temp.findIndex(e => e.id == id)
+      temp[index]['is_selected'] = false
+      setSendSize([...temp])
+    } else {
+      const temp = size
+      const index = temp.findIndex(e => e.id == id)
+      temp[index]['is_selected'] = true
+      setSendSize([...temp])
+    }
+  }
+
+
   //   const [image, setImage] = useState(null);
   // const [images, setImages] = useState(null);
+
+
+  const pura2Restruktur = (data) => {
+    const temp = data.map(data => {
+      data['is_selected'] = false
+      return data
+    })
+    return temp
+  }
+
   const [filePath, setFilePath] = useState([]);
   const [fileCamera, setFileCamera] = useState({});
   const [prodName, setProdName] = useState();
   const [categories, setCategories] = useState([]);
-  const [size, setSize] = useState([]);
+  const [size, setSize] = useState(pura2Restruktur(ashiap));
   const [color, SetColor] = useState([]);
   const [condition, setCondition] = useState([]);
   const [prodPrice, setProdPrice] = useState();
@@ -442,7 +496,7 @@ const AddProduct = ({navigation}) => {
   const [prodDesc, setProdDesc] = useState();
   const [status, setStatus] = useState([]);
   const [ctg, setCtg] = useState(0);
-  const [sendSize, setSendSize] = useState();
+  const [sendSize, setSendSize] = useState([]);
   console.log('ini size', sendSize);
   const [sendColor, setSendColor] = useState();
   console.log('ini color', sendColor);
@@ -471,7 +525,7 @@ const AddProduct = ({navigation}) => {
       .then((res) => {
         const size = res.data.data;
         console.log('size', size);
-        setSize(size);
+        // setSize();
       })
       .catch((err) => {
         console.log(err);
@@ -521,10 +575,10 @@ const AddProduct = ({navigation}) => {
     let ukuran = size
       .filter((item) => item.id)
       .map((select) => {
-        return {id_size: select};
+        return { id_size: select };
       });
 
-    setSendSize({ukuran});
+    setSendSize({ ukuran });
     console.log('KNTL', ukuran);
   };
   const colorOpe = [...color];
@@ -617,22 +671,27 @@ const AddProduct = ({navigation}) => {
   return (
     <ScrollView style={styles.container}>
       <ScrollView vertical={true}>
-        <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           {filePath.map((item) => {
             return (
               <Image
                 key={filePath.indexOf(item)}
-                source={{uri: filePath.length !== 0 ? item.path : ''}}
+                source={{ uri: filePath.length !== 0 ? item.path : '' }}
                 style={styles.imgStyle}
               />
             );
           })}
-          <Image source={{uri: fileCamera.path}} style={styles.imgStyle} />
+          <Image source={{ uri: fileCamera.path }} style={styles.imgStyle} />
         </View>
       </ScrollView>
-      <View style={{flexDirection: 'row'}}>
+      <View style={{ flexDirection: 'row' }}>
         <TouchableOpacity onPress={pickCamera} style={styles.button}>
           <Text style={styles.text}>Select Multiple</Text>
+          {
+            size.map(s => {
+              return s.is_selected ? <Text>{s.size}</Text> : null
+            })
+          }
         </TouchableOpacity>
       </View>
       <View style={styles.input}>
@@ -662,7 +721,7 @@ const AddProduct = ({navigation}) => {
       </TouchableOpacity>
 
       <Picker
-        style={{width: '100%'}}
+        style={{ width: '100%' }}
         mode="dialog"
         selectedValue={ctg}
         onValueChange={(itemValue) => {
@@ -670,7 +729,7 @@ const AddProduct = ({navigation}) => {
         }}>
         <Picker.Item label="Category" />
         {categories.length !== 0 &&
-          categories.map(({id_categories, category_name}) => {
+          categories.map(({ id_categories, category_name }) => {
             return (
               <Picker.Item
                 key={id_categories}
@@ -682,14 +741,14 @@ const AddProduct = ({navigation}) => {
       </Picker>
 
       <Picker
-        style={{width: '100%'}}
+        style={{ width: '100%' }}
         selectedValue={cnd}
         onValueChange={(itemValue) => {
           setCnd(itemValue);
         }}>
         <Picker.Item label="Condition" />
         {condition.length !== 0 &&
-          condition.map(({id, conditions}) => {
+          condition.map(({ id, conditions }) => {
             return <Picker.Item key={id} label={conditions} value={id} />;
           })}
       </Picker>
@@ -731,27 +790,27 @@ const AddProduct = ({navigation}) => {
       </View>
 
       <Picker
-        style={{width: '100%'}}
+        style={{ width: '100%' }}
         selectedValue={sts}
         onValueChange={(itemValue) => {
           setSts(itemValue);
         }}>
         <Picker.Item label="Status Barang" />
         {status.length !== 0 &&
-          status.map(({id, name}) => {
+          status.map(({ id, name }) => {
             return <Picker.Item key={id} label={name} value={id} />;
           })}
       </Picker>
 
       <ActionSheet gestureEnabled ref={colorSheetRef}>
         <ScrollView>
-          <View style={{justifyContent: 'center'}}>
-            <View style={{justifyContent: 'center'}}>
+          <View style={{ justifyContent: 'center' }}>
+            <View style={{ justifyContent: 'center' }}>
               <Text
-                style={{alignSelf: 'center', fontSize: 18, fontWeight: 'bold'}}>
+                style={{ alignSelf: 'center', fontSize: 18, fontWeight: 'bold' }}>
                 CATEGORY
               </Text>
-              {color.map(({id, color_name}) => {
+              {color.map(({ id, color_name }) => {
                 return (
                   <TouchableOpacity onPress={() => setSendColor(id)}>
                     <View key={id} label={color_name} value={id}>
@@ -767,19 +826,23 @@ const AddProduct = ({navigation}) => {
 
       <ActionSheet gestureEnabled ref={sizeSheetRef}>
         <ScrollView>
-          <View style={{justifyContent: 'center'}}>
-            <View style={{justifyContent: 'center'}}>
+          <View style={{ justifyContent: 'center' }}>
+            <View style={{ justifyContent: 'center' }}>
               <Text
-                style={{alignSelf: 'center', fontSize: 18, fontWeight: 'bold'}}>
+                style={{ alignSelf: 'center', fontSize: 18, fontWeight: 'bold' }}>
                 SIZES
               </Text>
-              {size.map(({id, size}) => {
+              {size.map(({ id, size }) => {
                 return (
-                  <TouchableOpacity onPress={() => handleSelection(id)}>
-                    <View key={id} label={size} value={id}>
-                      <Text>{size}</Text>
-                    </View>
-                  </TouchableOpacity>
+                  <View style={shouldCheckedOnStyle(id)}>
+
+                    <TouchableOpacity onPress={() => addOrRemoveSelected(id)}>
+                      <View key={id} label={size} value={id}>
+                        <Text>{size}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+
                 );
               })}
             </View>
@@ -797,6 +860,18 @@ const AddProduct = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  selectedSize: {
+    padding: 4,
+    margin: 4,
+    backgroundColor: 'green',
+    borderColor: 'black',
+    borderWidth: 2
+  },
+  notSelectedSize: {
+    margin: 4,
+    padding: 4,
+  },
+
   container: {
     flex: 1,
     // justifyContent: 'center',

@@ -404,7 +404,11 @@ const StackScreen = ({navigation}) => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        initialRouteName="Splash"
+        name="Profile"
+        component={MainProfileScreen}
+        options={{headerShown: false}}      
+      />
+      <Stack.Screen
         name="Splash"
         component={SplashScreen}
         options={{headerShown: false}}

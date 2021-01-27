@@ -15,9 +15,8 @@ const Stack = createStackNavigator();
 
 const MainProfile = ({navigation}) => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="AddProduct">
       <Stack.Screen
-        initialRouteName="MainProfile"
         name="MainProfile"
         component={ProfileScreen}
         options={{headerShown: false}}

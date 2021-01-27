@@ -5,7 +5,8 @@ import LogoSplash from '../../assets/images/Vector.png';
 const Splash = ({navigation}) => {
   useEffect(() => {
     setTimeout(() => {
-      navigation.replace('Main');
+      // navigation.replace('Main');
+      navigation.replace('Profile');
     }, 3000);
   }, [navigation]);
   return (
