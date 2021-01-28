@@ -150,6 +150,19 @@ const ProfileScreen = ({navigation, logout}) => {
                 </View>
               </TouchableOpacity>
             </View>
+            <View>
+              <TouchableOpacity
+                style={styles.order}
+                onPress={() => navigation.navigate('Chat')}>
+                <View>
+                  <Text children="Chatting" size="xl" />
+                  <Text children="Chatting" size="m" color="gray" />
+                </View>
+                <View>
+                  <Icon name="chevron-right" size={30} color={colors.gray} />
+                </View>
+              </TouchableOpacity>
+            </View>
             <TouchableOpacity style={styles.btnLogout} onPress={handleLogout}>
               <Text color="white" size="xl">
                 Logout
@@ -220,7 +233,19 @@ const ProfileScreen = ({navigation, logout}) => {
                     color="gray"
                   />
                 </View>
-
+                <View>
+                  <Icon name="chevron-right" size={30} color={colors.gray} />
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <TouchableOpacity
+                style={styles.order}
+                onPress={() => navigation.navigate('Chat')}>
+                <View>
+                  <Text children="Chatting" size="xl" />
+                  <Text children="Chatting" size="m" color="gray" />
+                </View>
                 <View>
                   <Icon name="chevron-right" size={30} color={colors.gray} />
                 </View>

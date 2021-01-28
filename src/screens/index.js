@@ -23,6 +23,7 @@ import NotificationScreen from './NotificationScreen';
 import SearchScreen from './SearchScreen';
 import ListScreen from './ListScreen';
 import CheckOutScreen from './MainScreen/CheckOutScreen';
+import RatingAndReview from './ReviewNRatingScreen';
 
 import CatalogeScreen from './CatalogeScreen';
 import MainCatalogScreen from './MainCatalog';
@@ -32,6 +33,7 @@ import SuccessScreen from './SuccessScreen';
 
 import ProductSellerScreen from './MyProfileScreen/ProductSellerScreen';
 import AddProductSellerScreen from './MyProfileScreen/AddProductSellerScreen';
+import ChatScreen from './ChatScreen';
 
 export {
   LoginScreen,
@@ -62,4 +64,6 @@ export {
   SuccessScreen,
   ProductSellerScreen,
   AddProductSellerScreen,
+  ChatScreen,
+  RatingAndReview,
 };

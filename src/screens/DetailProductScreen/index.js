@@ -220,6 +220,16 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
           </View>
         </View>
         <View style={styles.separator}></View>
+        <View>
+          <TouchableOpacity onPress={() => navigation.navigate('ReviewRating')}>
+            <Text
+              children="Review & Rating"
+              size="m"
+              style={{fontWeight: '700'}}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.separator}></View>
         <View
           style={{
             flexDirection: 'row',

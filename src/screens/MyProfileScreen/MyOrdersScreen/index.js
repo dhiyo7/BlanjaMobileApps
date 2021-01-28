@@ -45,7 +45,7 @@ const MyOrders = ({navigation}) => {
         />
       </View>
       <ScrollView style={styles.container}>
-        {historyOrders.map(({id, total, created_at, transaction_code, order_detail}) => {
+        {historyOrders.map(({id, total, created_at, transaction_code, order_detail, status_order}) => {
           return (
             <TouchableOpacity
               style={styles.card}
@@ -99,7 +99,7 @@ const MyOrders = ({navigation}) => {
                 </View>
               </View>
               <View style={{alignItems: 'flex-end'}}>
-                <Text children="Delivered" color="green" />
+                <Text children={status_order} color="green" />
               </View>
             </TouchableOpacity>
           );

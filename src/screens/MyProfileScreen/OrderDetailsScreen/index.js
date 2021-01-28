@@ -56,16 +56,16 @@ const OrderDetails = ({navigation, route}) => {
             style={styles.textOrderNo}
           />
         </View>
-        {/* <View>
+        <View>
           <View style={{flexDirection: 'row'}}>
             <Text
-              children="Tracking number: "
+              children="Status : "
               style={styles.textOrderNo}
               color="gray"
             />
-            <Text children="IW3475453455" style={styles.textOrderNo} />
+            <Text children={orderDetail.status_order} style={styles.textOrderNo} />
           </View>
-        </View> */}
+        </View>
 
         <View style={{flexDirection: 'row'}}>
           <Text
@@ -93,6 +93,7 @@ const OrderDetails = ({navigation, route}) => {
               conditions,
               product_qty,
               sub_total_item,
+              product_photo,
               id,
               order_id,
             }) => {
@@ -102,8 +103,8 @@ const OrderDetails = ({navigation, route}) => {
                     <View>
                       <Image
                         style={styles.img}
-                        source={require('../../../assets/images/womanorder.png')}
-                        // ource={{uri: `${JSON.parse(product_photo).shift()}`}}
+                        // source={require('../../../assets/images/womanorder.png')}
+                        source={{uri: `${JSON.parse(product_photo).shift()}`}}
                       />
                     </View>
                     <View style={{paddingVertical: 10}}>
