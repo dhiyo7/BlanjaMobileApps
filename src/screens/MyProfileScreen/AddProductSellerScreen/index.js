@@ -113,9 +113,7 @@ const AddProduct = ({navigation}) => {
     const selectedSizes = [];
     dataSize.forEach((s) => {
       if (s.is_selected) {
-        selectedSizes.push({
-          size_id: s.id,
-        });
+        selectedSizes.push(s.id);
       }
     });
     return selectedSizes;
@@ -125,9 +123,7 @@ const AddProduct = ({navigation}) => {
     const selectedColors = [];
     dataColor.forEach((c) => {
       if (c.is_selected) {
-        selectedColors.push({
-          color_id: c.id,
-        });
+        selectedColors.push(c.id);
       }
     });
     return selectedColors;
@@ -227,13 +223,12 @@ const AddProduct = ({navigation}) => {
     console.log('NAME ', prodName);
     data.append('category_id', ctg);
     console.log('CATEGORY ', ctg);
-
-    // data.append('size_id', sendSize);
-    // data.append('color_id', color);
-    data.append('sizes', size);
-    data.append('colors', color);
-    console.log('ANJIM ', formatDataSizeToSend(size));
-    console.log('ANJIM2 ', formatDataColorToSend(color));
+    formatDataSizeToSend(size).map((element) => {
+      data.append('sizes[]', JSON.stringify(element));
+    })
+    formatDataColorToSend(color).map((element) => {
+      data.append('colors[]', JSON.stringify(element));
+    })
     data.append('condition_id', cnd);
     data.append('product_price', prodPrice);
     data.append('product_qty', prodQty);

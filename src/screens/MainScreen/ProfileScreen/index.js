@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -22,10 +22,78 @@ const ProfileScreen = ({navigation, logout}) => {
   const user_id = useSelector((state) => state.authReducer.user_id);
   const fullname = useSelector((state) => state.authReducer.fullname);
   const email = useSelector((state) => state.authReducer.email);
+  // console.log('nyoba', email, fullname);
+  // console.log('ini token', token);
 
-  console.log('nyoba', email, fullname);
+  const [alamat, setAlamat] = useState([]);
+  const [historyOrders, setHistoryOrders] = useState([]);
+  const [products, setProduct] = useState([]);
+  const [orders, setOrder] = useState([]);
 
-  console.log('ini token', token);
+  const getProductsSeller = () => {
+    axios
+      .get(`${API_URL}/products/user?keyword=created_at DESC`, {
+        headers: {
+          'x-access-token': 'Bearer ' + token,
+        },
+      })
+      .then((res) => {
+        const product = res.data.data;
+        setProduct(product);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getIncomeOrders = () => {
+    axios
+      .get(`${API_URL}/orders/seller`, {
+        headers: {
+          'x-access-token': 'Bearer ' + token,
+        },
+      })
+      .then((res) => {
+        const orderIncome = res.data.data;
+        setOrder(orderIncome);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getHistoryOrders = () => {
+    axios
+      .get(`${API_URL}/orders`, {
+        headers: {
+          'x-access-token': 'Bearer ' + token,
+        },
+      })
+      .then((res) => {
+        const historyOrders = res.data.data;
+        setHistoryOrders(historyOrders);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getAddressUser = async () => {
+    await axios
+      .get(`${API_URL}/address`, {
+        headers: {
+          'x-access-token': 'Bearer ' + token,
+        },
+      })
+      .then((res) => {
+        const address = res.data.data;
+        setAlamat(address);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const handleLogout = () => {
     axios
       .delete(API_URL + '/auth/logout', {
@@ -35,7 +103,6 @@ const ProfileScreen = ({navigation, logout}) => {
       })
       .then(async (res) => {
         logout(token, user_id, level);
-
         console.log('done');
         navigation.navigate('Profile');
       })
@@ -43,6 +110,24 @@ const ProfileScreen = ({navigation, logout}) => {
         console.log(err);
       });
   };
+
+  useEffect(() => {
+    getHistoryOrders();
+    getAddressUser();
+    getProductsSeller();
+    getIncomeOrders();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getAddressUser(),
+        getHistoryOrders(),
+        getProductsSeller(),
+        getIncomeOrders();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   return (
     <>
       <View style={{marginTop: 30, marginLeft: 15}}>
@@ -107,7 +192,7 @@ const ProfileScreen = ({navigation, logout}) => {
                 <View>
                   <Text children="My orders" size="xl" />
                   <Text
-                    children="Already have 12 orders"
+                    children={`Already have ${historyOrders.length} orders`}
                     size="m"
                     color="gray"
                   />
@@ -124,7 +209,11 @@ const ProfileScreen = ({navigation, logout}) => {
                 onPress={() => navigation.navigate('Shipping address')}>
                 <View>
                   <Text children="Shipping address" size="xl" />
-                  <Text children="3 addresses" size="m" color="gray" />
+                  <Text
+                    children={`${alamat.length} address`}
+                    size="m"
+                    color="gray"
+                  />
                 </View>
                 <View>
                   <Icon name="chevron-right" size={30} color={colors.gray} />
@@ -144,12 +233,12 @@ const ProfileScreen = ({navigation, logout}) => {
                     color="gray"
                   />
                 </View>
-
                 <View>
                   <Icon name="chevron-right" size={30} color={colors.gray} />
                 </View>
               </TouchableOpacity>
             </View>
+
             <View>
               <TouchableOpacity
                 style={styles.order}
@@ -192,7 +281,7 @@ const ProfileScreen = ({navigation, logout}) => {
                 <View>
                   <Text children="View Product" size="xl" />
                   <Text
-                    children="View all product seller"
+                    children={`View all product seller, You Have ${products.length} products`}
                     size="m"
                     color="gray"
                   />
@@ -203,24 +292,25 @@ const ProfileScreen = ({navigation, logout}) => {
                 </View>
               </TouchableOpacity>
             </View>
+
             <View>
               <TouchableOpacity
                 style={styles.order}
-                onPress={() => navigation.navigate('AddProduct')}>
+                onPress={() => navigation.navigate('MyOrders')}>
                 <View>
-                  <Text children="Adding Product" size="xl" />
+                  <Text children="My orders" size="xl" />
                   <Text
-                    children="Add product for seller"
+                    children={`Already have ${orders.length} orders`}
                     size="m"
                     color="gray"
                   />
                 </View>
-
                 <View>
                   <Icon name="chevron-right" size={30} color={colors.gray} />
                 </View>
               </TouchableOpacity>
             </View>
+
             <View>
               <TouchableOpacity
                 style={styles.order}
@@ -267,8 +357,9 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     backgroundColor: '#E5E5E5',
-    paddingVertical: 25,
+    paddingVertical: 10,
     paddingHorizontal: 10,
+    marginBottom: 10,
   },
   myprofile: {
     fontWeight: 'bold',
@@ -279,6 +370,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.red,
     paddingVertical: 10,
     marginTop: 20,
+    marginBottom: 20,
     borderRadius: 50,
     alignSelf: 'center',
     alignItems: 'center',

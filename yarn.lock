@@ -6021,6 +6021,11 @@ react-native-dynamic-vector-icons@^1.0.0, react-native-dynamic-vector-icons@^1.1
   resolved "https://registry.yarnpkg.com/react-native-dynamic-vector-icons/-/react-native-dynamic-vector-icons-1.1.4.tgz#a6dffbe0b71e4b26b34fd61e906e8a1d050f22ed"
   integrity sha512-c+uxIphgMlJnjluleJw3nzww3UGVg/STUoRBmbFEFzy/LwQXOJHYJXsdsLRu4I1FcV7jK4A/8BMZBO4fFqFPTw==
 
+react-native-floating-action-menu@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-floating-action-menu/-/react-native-floating-action-menu-1.2.0.tgz#36ac56b7d8233d3a688d016313a893830e888df0"
+  integrity sha512-JdOR0K/wKCk5+pTDsYJhrmNs1u5ODHM2INhI2F07BuDlWtuSdP6E0K5uw/9U9ejm1aYcFASSpc0PLPh4c8cdrQ==
+
 react-native-gesture-handler@^1.9.0:
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.9.0.tgz#e441b1c0277c3fd4ca3e5c58fdd681e2f0ceddf0"

@@ -28,6 +28,7 @@
     "react-native-classic-header": "^0.1.7",
     "react-native-dotenv": "^2.5.0",
     "react-native-dynamic-vector-icons": "^1.1.4",
+    "react-native-floating-action-menu": "^1.2.0",
     "react-native-gesture-handler": "^1.9.0",
     "react-native-image-crop-picker": "^0.35.2",
     "react-native-outline-input": "^1.0.8",

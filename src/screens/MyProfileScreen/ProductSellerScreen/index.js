@@ -12,6 +12,8 @@ import axios from 'axios';
 import ActionSheet from 'react-native-actions-sheet';
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {FloatingMenu} from 'react-native-floating-action-menu';
+
 import {API_URL} from '@env';
 
 const ProductSeller = ({navigation, route}) => {
@@ -78,6 +80,18 @@ const ProductSeller = ({navigation, route}) => {
           </TouchableOpacity>
         )}
       />
+      <TouchableOpacity
+        // activeOpacity={0.2}
+        onPress={() => navigation.navigate('AddProduct')}
+        style={styles.TouchableOpacityStyle}>
+        <Image
+          source={{
+            uri:
+              'https://raw.githubusercontent.com/AboutReact/sampleresource/master/plus_icon.png',
+          }}
+          style={styles.FloatingButtonStyle}
+        />
+      </TouchableOpacity>
     </>
   );
 };
@@ -104,6 +118,22 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 12,
     color: '#000000',
+  },
+  TouchableOpacityStyle: {
+    position: 'absolute',
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 30,
+    bottom: 30,
+  },
+
+  FloatingButtonStyle: {
+    resizeMode: 'contain',
+    width: 50,
+    height: 50,
+    //backgroundColor:'black'
   },
 });
 
