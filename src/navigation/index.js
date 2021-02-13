@@ -43,7 +43,7 @@ import {
   ProductSellerScreen,
   UpdateAddressScreen,
   ChatScreen,
-  RatingAndReview
+  RatingAndReview,
 } from '../screens';
 
 import MainProfile from './Profile';
@@ -122,10 +122,7 @@ const StackScreen = ({navigation}) => {
           component={LoginScreen}
           options={{headerShown: false}}
         />
-        <Stack.Screen
-          name="ReviewRating"
-          component={RatingAndReview}
-        />
+        <Stack.Screen name="ReviewRating" component={RatingAndReview} />
         <Stack.Screen
           name="Register"
           component={RegisterScreen}
