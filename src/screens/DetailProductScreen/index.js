@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   View,
+  Alert,
   Image,
   ScrollView,
   TouchableOpacity,
@@ -36,7 +37,7 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
       .get(`${API_URL}/products/${itemId}`)
       .then((res) => {
         const product = res.data.data;
-        // console.log('Detail ', res.data.data);
+        console.log('Detail ', res.data.data);
         const image = res.data.data.product_photo;
         const images = JSON.parse(image);
         const quantity = res.data.data.product_qty;
@@ -221,7 +222,15 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
         </View>
         <View style={styles.separator}></View>
         <View>
-          <TouchableOpacity onPress={() => navigation.navigate('ReviewRating')}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('ReviewRating', {
+                itemId: product.id,
+              })
+            }>
+            {/* onPress={() =>
+               console.log('ID nya ',product.id)
+           }> */}
             <Text
               children="Review & Rating"
               size="m"
@@ -292,33 +301,62 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
           </ScrollView>
         </View>
       </ScrollView>
-      <View style={{bottom: 0, backgroundColor: 'white', width: '100%'}}>
-        <ButtonSubmit
-          // onPress={() => {
-          //   addToCart(
-          //     itemId,
-          //     img[0],
-          //     product.product_name,
-          //     product.product_price,
-          //   );
-          // }}
-          onPress={() =>
-            navigation.navigate(
-              'Bag',
-              addToCart(
-                itemId,
-                img[0],
-                product.product_name,
-                product.product_price,
-                qty,
-                ukuran,
-                warna,
-              ),
-            )
-          }
-          bg="red"
-          title="ADD TO CART"
-        />
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          bottom: 0,
+          backgroundColor: 'white',
+          height: 60,
+          width: '100%',
+          paddingRight: 10,
+        }}>
+        <View
+          style={{
+            width: '50%',
+            borderRadius: 8,
+            backgroundColor: 'red',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginVertical: 5,
+            marginLeft: 3
+          }}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(
+                'Bag',
+                addToCart(
+                  itemId,
+                  img[0],
+                  product.product_name,
+                  product.product_price,
+                  qty,
+                  ukuran,
+                  warna,
+                ),
+              )
+            }>
+            <Text children="Add to cart" color="white"/>
+          </TouchableOpacity>
+          {/* <ButtonSubmit bg="red" title="ADD TO CART" /> */}
+        </View>
+        <View
+          style={{
+            width: '50%',
+            borderRadius: 8,
+            backgroundColor: 'blue',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginVertical: 5,
+            marginLeft: 3
+          }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Chat' , {
+            sellerId : product.user_id
+          })}>
+            <Text children="Chat" color="white"/>
+          </TouchableOpacity>
+          {/* <ButtonSubmit bg="red" title="Tanya Ke Penjual" /> */}
+        </View>
       </View>
     </>
   );

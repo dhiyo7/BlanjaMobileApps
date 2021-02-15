@@ -15,209 +15,127 @@ import {Rating, AirbnbRating} from 'react-native-ratings';
 import axios from 'axios';
 import {API_URL} from '@env';
 
-
-const RatingAndReview = () => {
+const RatingAndReview = ({route}) => {
+  const {itemId} = route.params;
   const [modalVisible, setModalVisible] = useState(false);
   const [newReview, setNewReview] = useState('');
+  const [data, setData] = useState({});
+  const [ratingDetail, setRatingDetail] = useState([]);
+  const [review, setReview] = useState([]);
 
-  
+  const getData = (itemId) => {
+    axios
+      .get(`${API_URL}/review/${itemId}`)
+      .then((res) => {
+        const data = res.data.data;
+        console.log('DATA Reviews ', res.data.data);
+        setData(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    getData(itemId);
+  }, [itemId]);
 
   return (
     <>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.container}>
-          {/* <Text style={{marginTop: 40, fontSize: 30, fontWeight: 'bold'}}>
-            Rating&Reviews
-          </Text> */}
-          <View style={styles.containerRating}>
-            <View style={styles.ratingNum}>
-              <Text style={{fontSize: 44, fontWeight: 'bold'}}>4.3</Text>
-              <Text>23 Rating</Text>
-            </View>
-            <View style={styles.ratingDtl}>
-              <View style={styles.rating}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    width: 184,
-                    alignItems: 'center',
-                  }}>
-                  <View style={styles.containerStar}>
-                    <Image source={Star} />
-                    <Image source={Star} />
-                    <Image source={Star} />
-                    <Image source={Star} />
-                    <Image source={Star} />
-                  </View>
-                  <View style={{width: 114}}>
-                    <View
-                      style={{
-                        height: 8,
-                        width: 114,
-                        justifyContent: 'flex-start',
-                        backgroundColor: '#DB3022',
-                        borderRadius: 4,
-                      }}></View>
-                  </View>
-                </View>
-                <View style={{marginLeft: 23}}>
-                  <Text>12</Text>
-                </View>
+        {data === undefined ? (
+          <Text style={{fontSize: 44, fontWeight: 'bold'}}>
+            Belum ada rating serta review
+          </Text>
+        ) : (
+          <View style={styles.container}>
+            {/* <Text style={{marginTop: 40, fontSize: 30, fontWeight: 'bold'}}>
+                    Rating&Reviews
+                  </Text> */}
+            <View style={styles.containerRating}>
+              <View style={styles.ratingNum}>
+                <Text style={{fontSize: 44, fontWeight: 'bold'}}>
+                  {data.rating !== undefined && data.rating}
+                </Text>
+                <Text>
+                  {data.total_user_rating !== undefined &&
+                    `${data.total_user_rating} Rating`}
+                </Text>
               </View>
-              <View style={styles.rating}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    width: 184,
-                    alignItems: 'center',
-                  }}>
-                  <View style={styles.containerStar}>
-                    <Image source={Star} />
-                    <Image source={Star} />
-                    <Image source={Star} />
-                    <Image source={Star} />
-                  </View>
-                  <View style={{width: 114}}>
-                    <View
-                      style={{
-                        height: 8,
-                        width: 80,
-                        justifyContent: 'flex-start',
-                        backgroundColor: '#DB3022',
-                        borderRadius: 4,
-                      }}></View>
-                  </View>
-                </View>
-                <View style={{marginLeft: 23}}>
-                  <Text>4</Text>
-                </View>
-              </View>
-              <View style={styles.rating}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    width: 184,
-                    alignItems: 'center',
-                  }}>
-                  <View style={styles.containerStar}>
-                    <Image source={Star} />
-                    <Image source={Star} />
-                    <Image source={Star} />
-                  </View>
-                  <View style={{width: 114}}>
-                    <View
-                      style={{
-                        height: 8,
-                        width: 60,
-                        justifyContent: 'flex-start',
-                        backgroundColor: '#DB3022',
-                        borderRadius: 4,
-                      }}></View>
-                  </View>
-                </View>
-                <View style={{marginLeft: 23}}>
-                  <Text>3</Text>
-                </View>
-              </View>
-              <View style={styles.rating}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    width: 184,
-                    alignItems: 'center',
-                  }}>
-                  <View style={styles.containerStar}>
-                    <Image source={Star} />
-                    <Image source={Star} />
-                  </View>
-                  <View style={{width: 114}}>
-                    <View
-                      style={{
-                        height: 8,
-                        width: 40,
-                        justifyContent: 'flex-start',
-                        backgroundColor: '#DB3022',
-                        borderRadius: 4,
-                      }}></View>
-                  </View>
-                </View>
-                <View style={{marginLeft: 23}}>
-                  <Text>2</Text>
-                </View>
-              </View>
-              <View style={styles.rating}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    width: 184,
-                    alignItems: 'center',
-                  }}>
-                  <View style={styles.containerStar}>
-                    <Image source={Star} />
-                  </View>
-                  <View style={{width: 114}}>
-                    <View
-                      style={{
-                        height: 8,
-                        width: 20,
-                        justifyContent: 'flex-start',
-                        backgroundColor: '#DB3022',
-                        borderRadius: 4,
-                      }}></View>
-                  </View>
-                </View>
-                <View style={{marginLeft: 23}}>
-                  <Text>0</Text>
-                </View>
+              <View style={styles.ratingDtl}>
+                {data.rating_detail !== undefined &&
+                  data.rating_detail.map(({rating, total_user}) => {
+                    return (
+                      <View style={styles.rating}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            width: 184,
+                            alignItems: 'center',
+                          }}>
+                          <View style={styles.containerStar}>
+                            <AirbnbRating
+                              count={rating}
+                              defaultRating={5}
+                              size={12}
+                              showRating={false}
+                            />
+                          </View>
+                          <View style={{width: 114}}>
+                            <View
+                              style={{
+                                height: 8,
+                                width: 114,
+                                justifyContent: 'flex-start',
+                                backgroundColor: '#DB3022',
+                                borderRadius: 4,
+                              }}></View>
+                          </View>
+                        </View>
+                        <View style={{marginLeft: 23}}>
+                          <Text>{total_user}</Text>
+                        </View>
+                      </View>
+                    );
+                  })}
               </View>
             </View>
+
+            <View style={{marginTop: 37}}>
+              <Text
+                style={{
+                  fontSize: 24,
+                  fontWeight: '800',
+                }}>
+                {data.review !== undefined && `${data.review.length} Reviews`}
+              </Text>
+            </View>
+
+            {data.review !== undefined &&
+              data.review.map(({id, full_name, review}) => {
+                return (
+                  <ScrollView style={{width: '100%'}}>
+                    <View style={{marginTop: 40}}>
+                      <View style={styles.cardComent}>
+                        <View>
+                          <Image
+                            source={require('../../assets/images/myprofile.png')}
+                            style={styles.imgComent}
+                          />
+                        </View>
+                        <View style={styles.cardContainer}>
+                          <Text>{full_name}</Text>
+
+                          <Text>{review}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </ScrollView>
+                );
+              })}
           </View>
-
-          <View style={{marginTop: 37}}>
-            <Text style={{fontSize: 24, fontWeight: '800'}}>8 Reviews</Text>
-          </View>
-
-          <ScrollView style={{height: 300, width: '100%'}}>
-            <View style={{marginTop: 44}}>
-              <View style={styles.cardComent}>
-                <Image
-                  source={require('../../assets/images/myprofile.png')}
-                  style={styles.imgComent}
-                />
-                <View style={styles.cardContainer}>
-                  <Text>helena moore</Text>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}>
-                    <Image source={Star} />
-                    <Text>25-01-2021</Text>
-                  </View>
-                  <Text>test rating dan reviews</Text>
-                </View>
-              </View>
-            </View>
-          </ScrollView>
-
-          {/* <View style={styles.addcart}>
-            <TouchableOpacity
-              onPress={() => {
-                setModalVisible(!modalVisible);
-              }}>
-              <View style={{justifyContent: 'flex-end'}}>
-                <View style={styles.btn}>
-                  <Text style={{color: '#fff'}}>Write a review</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </View> */}
-        </View>
+        )}
       </ScrollView>
     </>
   );
@@ -225,6 +143,7 @@ const RatingAndReview = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     paddingHorizontal: 15,
     backgroundColor: 'white',
   },
@@ -256,10 +175,11 @@ const styles = StyleSheet.create({
     width: 60,
   },
   cardComent: {
-    minHeight: 100,
-    width: 311,
+    flexDirection: 'row',
+    width: '100%',
     backgroundColor: 'white',
-    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 8,
   },
   imgComent: {
@@ -267,13 +187,13 @@ const styles = StyleSheet.create({
     width: 52,
     borderRadius: 26,
     top: -20,
-    left: -20,
+    left: 30,
   },
   cardContainer: {
-    width: 311,
-    minHeight: 100,
-    paddingHorizontal: 23,
-    top: -20,
+    width: '100%',
+    paddingHorizontal: 40,
+    justifyContent: 'center',
+    height: '100%',
   },
   addcart: {
     position: 'absolute',
