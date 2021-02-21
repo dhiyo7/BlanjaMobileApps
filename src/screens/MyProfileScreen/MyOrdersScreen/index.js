@@ -22,7 +22,7 @@ const MyOrders = ({navigation}) => {
       })
       .then((res) => {
         const historyOrders = res.data.data;
-        console.log('DATA ORDER ', historyOrders);
+        console.log('DATA ORDER ', res.data.data);
         const tgl = moment(res.data.data.created_at).format('DD-MM-YYYY');
         // console.log('TGL ', tgl);
         setTglFormat(tgl);

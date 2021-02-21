@@ -130,7 +130,7 @@ const HomeScreen = ({navigation}) => {
                       backgroundColor: 'white',
                     }}>
                     <Image
-                      source={{uri: `${JSON.parse(product_photo).shift()}`}}
+                      source={{uri: `${API_URL}${JSON.parse(product_photo).shift()}`}}
                       style={{
                         borderRadius: 10,
                         width: 120,
@@ -209,7 +209,7 @@ const HomeScreen = ({navigation}) => {
                       backgroundColor: 'white',
                     }}>
                     <Image
-                      source={{uri: `${JSON.parse(product_photo).shift()}`}}
+                      source={{uri: `${API_URL}${JSON.parse(product_photo).shift()}`}}
                       style={{
                         borderRadius: 10,
                         width: 120,

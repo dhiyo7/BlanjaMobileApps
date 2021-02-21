@@ -281,7 +281,11 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
                     <View>
                       <Image
                         // source={require('../../../assets/images/home3.png')}
-                        source={{uri: `${JSON.parse(product_photo).shift()}`}}
+                        source={{
+                          uri: `${API_URL}${JSON.parse(
+                            product_photo,
+                          ).shift()}`,
+                        }}
                         style={{borderRadius: 10, width: 120, height: 170}}
                       />
                       <View style={styles.rating}>
@@ -319,7 +323,7 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
             justifyContent: 'center',
             alignItems: 'center',
             marginVertical: 5,
-            marginLeft: 3
+            marginLeft: 3,
           }}>
           <TouchableOpacity
             onPress={() =>
@@ -336,7 +340,7 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
                 ),
               )
             }>
-            <Text children="Add to cart" color="white"/>
+            <Text children="Add to cart" color="white" />
           </TouchableOpacity>
           {/* <ButtonSubmit bg="red" title="ADD TO CART" /> */}
         </View>
@@ -348,12 +352,15 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
             justifyContent: 'center',
             alignItems: 'center',
             marginVertical: 5,
-            marginLeft: 3
+            marginLeft: 3,
           }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Chat' , {
-            sellerId : product.user_id
-          })}>
-            <Text children="Chat" color="white"/>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Chat', {
+                sellerId: product.user_id,
+              })
+            }>
+            <Text children="Chat" color="white" />
           </TouchableOpacity>
           {/* <ButtonSubmit bg="red" title="Tanya Ke Penjual" /> */}
         </View>
