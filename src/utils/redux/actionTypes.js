@@ -23,6 +23,8 @@ export const REGISTER = 'REGISTER';
 export const RESET_PASSWORD = 'RESET_PASSWORD';
 export const RESET_FULLFILLED = 'RESET_FULLFILLED';
 export const CLEAR_STATE = 'CLEAR_STATE';
+export const SETEMAIL = 'SETEMAIL';
+
 
 export const pending = `_${ActionType.Pending}`;
 export const rejected = `_${ActionType.Rejected}`;

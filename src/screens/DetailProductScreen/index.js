@@ -9,8 +9,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Rating} from 'react-native-ratings';
 import {ButtonSubmit, Text} from '../../components';
-import {Picker} from '@react-native-picker/picker';
+// import {Picker} from '@react-native-picker/picker';
 import {colors} from '../../utils';
 import {connect, useSelector} from 'react-redux';
 import {addToCart} from '../../utils/redux/action/cartAction';
@@ -29,8 +30,11 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
   const [ukuran, setUkuran] = useState('');
   const [warna, setWarna] = useState('');
 
-  console.log('UKURAN', ukuran);
-  console.log('WARNA', warna);
+  const userId = useSelector((state) => state.authReducer.user_id);
+  console.log('USERID', userId);
+
+  // console.log('UKURAN', ukuran);
+  // console.log('WARNA', warna);
 
   const getProduct = async (itemId) => {
     await axios
@@ -76,7 +80,7 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
     getDataPopular(itemId);
     // getProducts(item);
     // getDataCard();
-  }, [itemId]);
+  }, [itemId, userId]);
 
   return (
     <>
@@ -104,7 +108,7 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
                   }
                 : null
             }
-            resizeMode="contain"
+            resizeMode="center"
             // source={{uri: `${JSON.parse(product.product_photo).shift()}`}}
           />
         </View>
@@ -143,23 +147,34 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
             alignItems: 'center',
             marginBottom: 10,
           }}>
-          <Icon name="star" size={20} color={colors.yellow} />
-          <Text children={product.rating} color="gray" />
+          {/* <Icon name="star" size={20} color={colors.yellow} /> */}
+          <Rating
+            ratingCount={5}
+            startingValue={product.rating}
+            readonly={true}
+            imageSize={20}
+            style={{paddingRight: 5}}
+          />
+          <Text children={product.rating} color="gray" size="l" />
         </View>
         <View style={{marginBottom: 13}}>
           <Text children={product.product_desc} size="l" />
         </View>
 
         <View>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <View>
+          <View
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <View style={{width: '50%', flexDirection: 'column'}}>
               <Text
                 children="Color"
                 size="l"
                 style={{fontWeight: '700', marginLeft: 5}}
               />
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
                 {color.map(({id, color_hexa, color_name}) => {
                   return (
                     <TouchableOpacity
@@ -169,17 +184,17 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
                         width: 40,
                         height: 40,
                         marginHorizontal: 5,
+                        marginVertical: 5,
                         borderRadius: 75,
-                        backgroundColor:
-                          color_name === warna ? color_hexa : 'white',
-                        borderWidth: 15,
-                        borderColor: color_hexa,
+                        backgroundColor: color_hexa,
+                        borderWidth: 2,
+                        borderColor: color_name === warna ? 'black' : '#e7e3cd',
                       }}></TouchableOpacity>
                   );
                 })}
               </View>
             </View>
-            <View style={{alignItems: 'flex-start'}}>
+            <View style={{width: '50%', alignItems: 'flex-start'}}>
               <Text
                 children="Size"
                 style={{fontWeight: '700', marginLeft: 5}}
@@ -190,6 +205,7 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
                   flexDirection: 'row',
                   justifyContent: 'center',
                   alignItems: 'center',
+                  flexWrap: 'wrap',
                 }}>
                 {size.map(({id, size}) => {
                   return (
@@ -200,6 +216,7 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         marginHorizontal: 5,
+                        marginVertical: 5,
                         borderRadius: 75,
                         backgroundColor: size === ukuran ? 'red' : 'white',
                         borderWidth: 1,
@@ -278,25 +295,45 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
                         categories: category_name,
                       })
                     }
-                    style={{paddingHorizontal: 10, marginBottom: 20}}
+                    style={{marginHorizontal: 5, marginBottom: 20}}
                     key={id}>
-                    <View>
+                    <View
+                      style={{
+                        borderWidth: 1,
+                        borderRadius: 10,
+                        borderStyle: 'solid',
+                        borderColor: '#e5e5e5',
+                        backgroundColor: 'white',
+                      }}>
                       <Image
                         // source={require('../../../assets/images/home3.png')}
                         source={{
                           uri: `${API_URL}${JSON.parse(product_photo).shift()}`,
                         }}
-                        style={{borderRadius: 10, width: 120, height: 170}}
+                        style={{
+                          borderRadius: 10,
+                          width: 120,
+                          height: 170,
+                        }}
                       />
-                      <View style={styles.rating}>
-                        <Image
-                          source={require('../../assets/images/Star.png')}
-                        />
-
-                        <Text children={rating} />
+                      <View style={{paddingHorizontal: 7, paddingVertical: 5}}>
+                        <View style={styles.rating}>
+                          <Rating
+                            ratingCount={5}
+                            startingValue={rating}
+                            readonly={true}
+                            imageSize={20}
+                            style={{paddingRight: 5}}
+                          />
+                          <Text children={rating} />
+                        </View>
+                        <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                          <Text children={product_name} size={12} />
+                        </View>
+                        <View>
+                          <Text children={`Rp.${product_price}`} />
+                        </View>
                       </View>
-                      <Text children={product_name} />
-                      <Text children={product_price} />
                     </View>
                   </TouchableOpacity>
                 );
@@ -337,7 +374,8 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
                   qty,
                   ukuran,
                   warna,
-                  product.user_id
+                  product.user_id,
+                  userId,
                 ),
               )
             }>
@@ -375,12 +413,14 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: 'white',
     borderRadius: 25,
-    borderStyle: 'solid',
-    borderWidth: 1,
+    // borderStyle: 'solid',
+    // borderWidth: 1,
+    overflow: 'hidden',
   },
   img: {
     height: 250,
     width: '100%',
+    borderRadius: 20,
     paddingVertical: 10,
   },
   separator: {
@@ -399,13 +439,16 @@ const styles = StyleSheet.create({
   slider: {
     marginTop: 5,
     flexDirection: 'row',
+    marginHorizontal: 5,
   },
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addToCart: (id, img, name, prc, qty, ukuran, warna, sellerId) =>
-      dispatch(addToCart(id, img, name, prc, qty, ukuran, warna, sellerId)),
+    addToCart: (id, img, name, prc, qty, ukuran, warna, user_id, userId) =>
+      dispatch(
+        addToCart(id, img, name, prc, qty, ukuran, warna, user_id, userId),
+      ),
   };
 };
 export default connect(null, mapDispatchToProps)(DetailProductScreen);

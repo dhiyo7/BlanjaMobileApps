@@ -14,7 +14,7 @@ import {ButtonSubmit} from '../../../components/index';
 import FormInput from 'react-native-outline-input';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
-import {Picker} from '@react-native-picker/picker';
+import {Picker} from 'native-base';
 import ActionSheet from 'react-native-actions-sheet';
 import {API_URL} from '@env';
 import {createRef} from 'react';

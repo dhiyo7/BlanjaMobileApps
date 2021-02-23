@@ -24,6 +24,7 @@ import {connect} from 'react-redux';
 import {login} from '../../../utils/redux/action/authAction';
 
 const LoginScreen = ({navigation, login}) => {
+  // const API_URL = 'http://192.168.1.2:8007';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [level, setLevel] = useState(1);
@@ -168,7 +169,7 @@ const LoginScreen = ({navigation, login}) => {
             secureTextEntry
             // style={{marginTop: 8}}
           />
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Forgot')}>
             <View style={styles.forgot}>
               <Image
                 source={require('../../../assets/image/Vector.png')}

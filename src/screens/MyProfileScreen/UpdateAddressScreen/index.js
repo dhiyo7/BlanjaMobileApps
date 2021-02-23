@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, ScrollView} from 'react-native';
 import Text from '../../../components/Text';
 import {ButtonSubmit} from '../../../components/index';
-import {Picker} from '@react-native-picker/picker';
+import {Picker} from 'native-base';
 import FormInput from 'react-native-outline-input';
 import {useSelector} from 'react-redux';
 import axios from 'axios';

@@ -12,7 +12,7 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 import {ButtonSubmit} from '../../../components/index';
 import FormInput from 'react-native-outline-input';
-import {Picker} from '@react-native-picker/picker';
+import {Picker} from 'native-base';
 import ActionSheet from 'react-native-actions-sheet';
 import {useSelector} from 'react-redux';
 import Iconn from 'react-native-vector-icons/Ionicons';

@@ -13,7 +13,7 @@ import {
 import {HeaderHome} from '../../../components';
 import {Text} from '../../../components';
 import {IconStarAct} from '../../../assets/icons';
-
+import {Rating} from 'react-native-ratings';
 import {colors} from '../../../utils';
 import {API_URL} from '@env';
 
@@ -22,10 +22,9 @@ const HomeScreen = ({navigation}) => {
   const [card, setCard] = useState([]);
   const [cardTwo, setCardTwo] = useState([]);
 
-  
   const getDataNew = async () => {
     await axios
-      .get(`${API_URL}/products?keyword=created_at DESC`)
+      .get(`${API_URL}/products?limit=5&keyword=created_at DESC`)
       .then((res) => {
         const card = res.data.data.products;
         console.log('DataNew ', res.data.data.products);
@@ -38,17 +37,17 @@ const HomeScreen = ({navigation}) => {
 
   const getDataPopular = async () => {
     await axios
-    .get(`${API_URL}/products?keyword=created_at DESC`)
-    .then((res) => {
-      const cardTwo = res.data.data.products;
-      // console.log('DataPopular', cardTwo);
-      setCardTwo(cardTwo);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .get(`${API_URL}/products?limit=15&keyword=rating DESC`)
+      .then((res) => {
+        const cardTwo = res.data.data.products;
+        // console.log('DataPopular', cardTwo);
+        setCardTwo(cardTwo);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
-  
+
   // useEffect(() => {
   //   getDataNew();
   //   getDataPopular();
@@ -89,7 +88,7 @@ const HomeScreen = ({navigation}) => {
           </View>
           <View>
             <Text
-              onPress={() => navigation.navigate('Catalog', {data: card})}
+              onPress={() => navigation.navigate('Catalog', {new: card})}
               children="See All"
               size="m"
               style={styles.childText}
@@ -119,7 +118,7 @@ const HomeScreen = ({navigation}) => {
                       categories: category_name,
                     })
                   }
-                  style={{paddingRight: 10}}
+                  style={{marginHorizontal: 5}}
                   key={id}>
                   <View
                     style={{
@@ -130,25 +129,32 @@ const HomeScreen = ({navigation}) => {
                       backgroundColor: 'white',
                     }}>
                     <Image
-                      source={{uri: `${API_URL}${JSON.parse(product_photo).shift()}`}}
+                      source={{
+                        uri: `${API_URL}${JSON.parse(product_photo).shift()}`,
+                      }}
                       style={{
                         borderRadius: 10,
                         width: 120,
                         height: 170,
                       }}
                     />
-                    <View style={styles.rating}>
-                      <Image
-                        source={require('../../../assets/images/Star.png')}
-                      />
-
-                      <Text children={rating} />
-                    </View>
-                    <View>
-                      <Text children={product_name} size={12} />
-                    </View>
-                    <View>
-                      <Text children={product_price} />
+                    <View style={{paddingHorizontal: 7, paddingVertical: 5}}>
+                      <View style={styles.rating}>
+                        <Rating
+                          ratingCount={5}
+                          startingValue={rating}
+                          readonly={true}
+                          imageSize={15}
+                          style={{paddingRight: 5}}
+                        />
+                        <Text children={rating} />
+                      </View>
+                      <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                        <Text children={product_name} size={12} />
+                      </View>
+                      <View>
+                        <Text children={`Rp.${product_price}`} />
+                      </View>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -171,7 +177,7 @@ const HomeScreen = ({navigation}) => {
               children="See All"
               size="m"
               style={styles.childText}
-              onPress={() => navigation.navigate('Catalog', {data: card})}
+              onPress={() => navigation.navigate('Catalog', {popular: cardTwo})}
             />
           </View>
         </View>
@@ -198,7 +204,7 @@ const HomeScreen = ({navigation}) => {
                       categories: category_name,
                     })
                   }
-                  style={{marginBottom: 20, paddingRight: 10}}
+                  style={{marginBottom: 20, marginHorizontal: 5}}
                   key={id}>
                   <View
                     style={{
@@ -209,25 +215,32 @@ const HomeScreen = ({navigation}) => {
                       backgroundColor: 'white',
                     }}>
                     <Image
-                      source={{uri: `${API_URL}${JSON.parse(product_photo).shift()}`}}
+                      source={{
+                        uri: `${API_URL}${JSON.parse(product_photo).shift()}`,
+                      }}
                       style={{
                         borderRadius: 10,
                         width: 120,
                         height: 170,
                       }}
                     />
-                    <View style={styles.rating}>
-                      <Image
-                        source={require('../../../assets/images/Star.png')}
-                      />
-
-                      <Text children={rating} />
-                    </View>
-                    <View>
-                      <Text children={product_name} size={12} />
-                    </View>
-                    <View>
-                      <Text children={product_price} />
+                    <View style={{paddingHorizontal: 7, paddingVertical: 5}}>
+                      <View style={styles.rating}>
+                        <Rating
+                          ratingCount={5}
+                          startingValue={rating}
+                          readonly={true}
+                          imageSize={15}
+                          style={{paddingRight: 5}}
+                        />
+                        <Text children={rating} />
+                      </View>
+                      <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                        <Text children={product_name} size={12} />
+                      </View>
+                      <View>
+                        <Text children={`Rp.${product_price}`} />
+                      </View>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -277,14 +290,14 @@ const styles = StyleSheet.create({
 
   rating: {
     flexDirection: 'row',
-    marginTop: 6,
+    marginTop: 5,
     alignItems: 'center',
   },
 
   slider: {
     marginTop: 5,
     flexDirection: 'row',
-    paddingHorizontal: 10,
+    marginHorizontal: 5,
   },
 });
 

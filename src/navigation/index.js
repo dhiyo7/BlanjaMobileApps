@@ -215,6 +215,27 @@ const StackScreen = ({navigation}) => {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="Shipping address"
+          component={ShippingAddressScreen}
+          options={{headerShown: false}}
+        />
+
+        <Stack.Screen
+          name="Forgot"
+          component={ForgotPasswordScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Otp"
+          component={LoginForgot}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Reset"
+          component={ResetPasswordScreen}
+          options={{headerShown: false}}
+        />
       </Stack.Navigator>
     </SocketProvider>
   );

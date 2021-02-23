@@ -45,11 +45,12 @@ const BagScreen = ({
 
   const token = useSelector((state) => state.authReducer.token);
   const user_id = useSelector((state) => state.cart.cart);
-  console.log("userID ", user_id);
+  const userId = useSelector((state) => state.authReducer.user_id);
+  console.log('USERID BAG', userId);
 
-  useEffect(() => {
-    getAddressUser();
-  }, []);
+  // useEffect(() => {
+  //   getAddressUser();
+  // }, []);
 
   if (pick.length !== 0) {
     pick.map((item) =>
@@ -65,9 +66,8 @@ const BagScreen = ({
         },
       })
       .then((res) => {
-        const address = res.data.data[0].id_address;
-        setAddress(address);
-        console.log('ADDRESS', address);
+        const alamat = res.data.data[0];
+        setAddress(alamat);
       })
       .catch((err) => {
         console.log(err);
@@ -76,7 +76,6 @@ const BagScreen = ({
 
   const sendData = () => {
     let invoice = Math.floor(Math.random() * 100001) + 1;
-    let alamat = address;
     let productId = cart
       .filter((item) => item.pick === true)
       .map((item) => {
@@ -87,13 +86,12 @@ const BagScreen = ({
         };
       });
     console.log('ITEM DI PICK', productId);
-    console.log('cek', kirim);
 
     const kirim = {
       item: productId,
       transaction_code: invoice,
-      id_address: alamat,
-      seller_id: user_id[0].sellerId
+      seller_id: user_id[0].user_id,
+      id_address: '',
     };
 
     // axios
@@ -124,137 +122,143 @@ const BagScreen = ({
     });
     setTotalItems(items);
     setTotalPrice(prices);
-  }, [cart, totalPrice, totalItems, setTotalPrice, setTotalItems]);
+  }, [cart, totalPrice, totalItems, userId, setTotalPrice, setTotalItems]);
 
   return (
     <>
       <ScrollView style={styles.container}>
         <Text style={styles.bag}>My Bag</Text>
         {/* Card */}
+
         {cart.length ? (
-          cart.map((item) => {
-            return (
-              <View style={styles.bag2} key={item.id}>
-                <CheckBox
-                  disabled={false}
-                  tintColors={{true: '#DB3022', false: '#9B9B9B'}}
-                  value={item.pick}
-                  onChange={() => pickCart(item.id)}
-                  style={{marginTop: 50}}
-                />
-                <Image
-                  // source={require('../../../assets/images/home3.png')}
-                  source={{uri: `${API_URL}${item.img}`}}
-                  resizeMode="contain"
-                  style={{
-                    borderRadius: 10,
-                    width: 110,
-                    height: 130,
-                    // width: '20%',
-                    backgroundColor: 'white',
-                  }}
-                />
-                <View
-                  style={{
-                    flexDirection: 'column',
-                    marginHorizontal: 10,
-                    marginTop: 5,
-                  }}>
-                  <View>
-                    <View
+          cart
+            // .filter((item) => item.userId === userId)
+            .map((item) => {
+              return (
+                <View style={styles.bag2} key={item.id}>
+                  <CheckBox
+                    disabled={false}
+                    tintColors={{true: '#DB3022', false: '#9B9B9B'}}
+                    value={item.pick}
+                    onChange={() => pickCart(item.id)}
+                    style={{marginTop: 50}}
+                  />
+                  <View style={{height: '100%', paddingVertical: 10}}>
+                    <Image
+                      source={{uri: `${API_URL}${item.img}`}}
+                      resizeMode="center"
                       style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                      }}>
-                      <View>
-                        <Text>{item.name}</Text>
-                        <View style={{flexDirection: 'row', marginTop: 7}}>
-                          <Text>Color: {item.warna}</Text>
-                          <Text style={{marginLeft: 9}}>
-                            Sizes: {item.ukuran}
-                          </Text>
-                        </View>
-                      </View>
-                      <TouchableOpacity
-                        onPress={() =>
-                          Alert.alert(
-                            'Delete',
-                            'Are you sure to delete item in the bag?',
-                            [
-                              {
-                                text: 'Cancel',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                              },
-                              {
-                                text: 'OK',
-                                onPress: () => deleteCart(item.id),
-                              },
-                            ],
-                            {cancelable: false},
-                          )
-                        }>
-                        <Icon name="delete" size={30} color={colors.red} />
-                      </TouchableOpacity>
-                    </View>
+                        borderRadius: 10,
+                        width: 110,
+                        height: '100%',
+                        backgroundColor: 'white',
+                      }}
+                    />
                   </View>
 
                   <View
                     style={{
-                      flexDirection: 'row',
-                      marginTop: 20,
-                      alignContent: 'center',
-                      justifyContent: 'center',
+                      flexDirection: 'column',
+                      marginVertical: 10,
+                      marginHorizontal: 10,
                     }}>
                     <View
                       style={{
+                        width: '100%',
                         flexDirection: 'row',
-                        justifyContent: 'center',
                         alignItems: 'center',
                       }}>
-                      {item.qty === 1 ? (
-                        <TouchableOpacity style={styles.pickSize}>
-                          <Icon name="minus" size={20} color={colors.black} />
+                      <View
+                        style={{
+                          width: '40%',
+                          flexDirection: 'row',
+                          flexWrap: 'wrap',
+                        }}>
+                        <Text>{item.name}</Text>
+                      </View>
+                      <View style={{width: '60%', marginLeft: 10}}>
+                        <TouchableOpacity
+                          onPress={() =>
+                            Alert.alert(
+                              'Delete',
+                              'Are you sure to delete item in the bag?',
+                              [
+                                {
+                                  text: 'Cancel',
+                                  onPress: () => console.log('Cancel Pressed'),
+                                  style: 'cancel',
+                                },
+                                {
+                                  text: 'OK',
+                                  onPress: () => deleteCart(item.id),
+                                },
+                              ],
+                              {cancelable: false},
+                            )
+                          }>
+                          <Icon name="delete" size={25} color={colors.red} />
                         </TouchableOpacity>
-                      ) : (
-                        <TouchableOpacity style={styles.pickSize}>
-                          <Icon
-                            name="minus"
-                            size={20}
-                            color={colors.black}
-                            onPress={() => decreaseQuantity(item.id)}
-                          />
-                        </TouchableOpacity>
-                      )}
-                      <Text
-                        children={item.qty}
-                        size="l"
-                        style={{marginHorizontal: 4}}
-                      />
-                      <TouchableOpacity style={styles.pickSize}>
-                        <Icon
-                          name="plus"
-                          size={20}
-                          color={colors.black}
-                          onPress={() => increaseQuantity(item.id)}
-                        />
-                      </TouchableOpacity>
+                      </View>
+                    </View>
+                    <View style={{flexDirection: 'row', marginTop: 7}}>
+                      <Text>Color: {item.warna}</Text>
+                      <Text style={{marginLeft: 9}}>Sizes: {item.ukuran}</Text>
                     </View>
                     <View
                       style={{
-                        marginTop: 30,
-                        marginLeft: 80,
-                        paddingBottom: 30,
+                        flexDirection: 'row',
+                        width: '100%',
+                        alignContent: 'center',
                       }}>
-                      <Text>{`Rp${(item.prc * item.qty).toLocaleString(
-                        'id-ID',
-                      )}`}</Text>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          width: '30%',
+                        }}>
+                        {item.qty === 1 ? (
+                          <TouchableOpacity style={styles.pickSize}>
+                            <Icon name="minus" size={20} color={colors.black} />
+                          </TouchableOpacity>
+                        ) : (
+                          <TouchableOpacity style={styles.pickSize}>
+                            <Icon
+                              name="minus"
+                              size={20}
+                              color={colors.black}
+                              onPress={() => decreaseQuantity(item.id)}
+                            />
+                          </TouchableOpacity>
+                        )}
+                        <Text
+                          children={item.qty}
+                          size="l"
+                          style={{marginHorizontal: 4}}
+                        />
+                        <TouchableOpacity style={styles.pickSize}>
+                          <Icon
+                            name="plus"
+                            size={20}
+                            color={colors.black}
+                            onPress={() => increaseQuantity(item.id)}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                      <View
+                        style={{
+                          marginTop: 30,
+                          width: '70%',
+                          paddingBottom: 30,
+                        }}>
+                        <Text>{`Rp${(item.prc * item.qty).toLocaleString(
+                          'id-ID',
+                        )}`}</Text>
+                      </View>
                     </View>
                   </View>
                 </View>
-              </View>
-            );
-          })
+              );
+            })
         ) : (
           <View style={styles.empty}>
             <Image
@@ -289,8 +293,8 @@ const BagScreen = ({
           onPress={() => {
             if (cart.length === 0 && totalItems === 0) {
               return Alert.alert(
-                'Bag',
-                'Blanja dulu skuy!',
+                'Your Bag is empty',
+                `Let's shop now!`,
                 [
                   {
                     text: 'OK',
@@ -314,13 +318,20 @@ const BagScreen = ({
             }
             navigation.navigate(
               'CheckOut',
+              {
+                id_address: address.id_address,
+                fullname: address.fullname,
+                address: address.address,
+                city: address.city,
+                region: address.region,
+                zip_code: address.zip_code,
+                country: address.country,
+              },
               sendData(),
-              totalPrice,
-              clearCart(),
             );
           }}
           style={styles.button}>
-          <Text>CheckOut</Text>
+          <Text>Checkout</Text>
         </TouchableHighlight>
       </View>
     </>
@@ -412,7 +423,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => {
-  console.log('LALAL', state.cart.cart);
+  console.log('lala', state.cart.cart);
   return {
     cart: state.cart.cart,
   };
@@ -421,7 +432,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     deleteCart: (id) => dispatch(deleteCart(id)),
-    clearCart: () => dispatch(clearCart()),
+    // clearCart: () => dispatch(clearCart()),
     clearCheckout: () => dispatch(clearCheckout()),
     increaseQuantity: (id) => dispatch(increaseQuantity(id)),
     decreaseQuantity: (id) => dispatch(decreaseQuantity(id)),
