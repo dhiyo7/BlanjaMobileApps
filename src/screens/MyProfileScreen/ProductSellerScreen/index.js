@@ -2,10 +2,11 @@ import React, {useState, useEffect, createRef} from 'react';
 import {
   StyleSheet,
   View,
+  Button,
   Text,
   TouchableOpacity,
-  Button,
   Image,
+  Alert,
 } from 'react-native';
 import {FlatGrid} from 'react-native-super-grid';
 import axios from 'axios';
@@ -49,6 +50,22 @@ const ProductSeller = ({navigation, route}) => {
       });
   };
 
+  const handleDelete = async (id) => {
+    await axios
+      .delete(`${API_URL}/products/${id}`, {
+        headers: {
+          'x-access-token': 'Bearer ' + token,
+        },
+      })
+      .then((res) => {
+        getProductsSeller();
+        console.log('Good');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <>
       <FlatGrid
@@ -57,31 +74,97 @@ const ProductSeller = ({navigation, route}) => {
         style={StyleSheet.gridView}
         spacing={10}
         renderItem={({item}) => (
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('DetailProduct', {
-                itemId: item.id,
-                categories: item.category_name,
-              })
-            }>
-            <View style={[styles.itemContainer]}>
+          <View style={styles.itemContainer}>
+            <View>
               <Image
-                source={{uri: `${JSON.parse(item.product_photo).shift()}`}}
-                style={{
-                  borderRadius: 10,
-                  width: '100%',
-                  height: 170,
+                source={{
+                  uri: `${API_URL}${JSON.parse(item.product_photo).pop()}`,
                 }}
-                resizeMode="contain"
+                style={{
+                  // borderRadius: 10,
+                  // width: '100%',
+                  // height: 150,
+                  height: 135,
+                  width: 160,
+                }}
+                resizeMode="stretch"
               />
+            </View>
+            <View>
               <Text style={styles.itemName}>{item.product_name}</Text>
               <Text style={styles.itemCode}>Rp.{item.product_price}</Text>
             </View>
-          </TouchableOpacity>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                bottom: 0,
+                backgroundColor: 'white',
+                height: 60,
+                width: '100%',
+                paddingRight: 10,
+              }}>
+              <View
+                style={{
+                  width: '50%',
+                  borderRadius: 8,
+                  backgroundColor: 'green',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginVertical: 5,
+                  marginLeft: 3,
+                  color: 'white',
+                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('UpdateProductSeller', {
+                      itemId: item.id,
+                    });
+                  }}>
+                  <Text children="Edit" color="white" />
+                </TouchableOpacity>
+                {/* <ButtonSubmit bg="red" title="ADD TO CART" /> */}
+              </View>
+              <View
+                style={{
+                  width: '50%',
+                  borderRadius: 8,
+                  backgroundColor: 'red',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginVertical: 5,
+                  marginLeft: 3,
+                }}>
+                <TouchableOpacity
+                  onPress={() =>
+                    Alert.alert(
+                      'Confirm',
+                      'Are you sure fot delete this product ?',
+                      [
+                        {
+                          text: 'Cancel',
+                          onPress: () => console.log('Cancel Pressed'),
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'OK',
+                          onPress: () => {
+                            handleDelete(item.id);
+                          },
+                        },
+                      ],
+                      {cancelable: false},
+                    )
+                  }>
+                  <Text children="Delete" color="white" />
+                </TouchableOpacity>
+                {/* <ButtonSubmit bg="red" title="Tanya Ke Penjual" /> */}
+              </View>
+            </View>
+          </View>
         )}
       />
       <TouchableOpacity
-        // activeOpacity={0.2}
         onPress={() => navigation.navigate('AddProduct')}
         style={styles.TouchableOpacityStyle}>
         <Image
@@ -103,11 +186,15 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     justifyContent: 'flex-end',
-    borderRadius: 5,
-    padding: 10,
-    height: 150,
-    marginTop: 30,
-    marginBottom: 20,
+    // borderRadius: 5,
+    // padding: 10,
+    height: '100%',
+    backgroundColor: 'white',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   itemName: {
     fontSize: 16,

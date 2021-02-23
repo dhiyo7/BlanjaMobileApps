@@ -44,6 +44,8 @@ const BagScreen = ({
   const [address, setAddress] = useState([]);
 
   const token = useSelector((state) => state.authReducer.token);
+  const user_id = useSelector((state) => state.cart.cart);
+  console.log("userID ", user_id);
 
   useEffect(() => {
     getAddressUser();
@@ -85,11 +87,13 @@ const BagScreen = ({
         };
       });
     console.log('ITEM DI PICK', productId);
+    console.log('cek', kirim);
 
     const kirim = {
       item: productId,
       transaction_code: invoice,
       id_address: alamat,
+      seller_id: user_id[0].sellerId
     };
 
     // axios
@@ -140,7 +144,7 @@ const BagScreen = ({
                 />
                 <Image
                   // source={require('../../../assets/images/home3.png')}
-                  source={{uri: `${item.img}`}}
+                  source={{uri: `${API_URL}${item.img}`}}
                   resizeMode="contain"
                   style={{
                     borderRadius: 10,

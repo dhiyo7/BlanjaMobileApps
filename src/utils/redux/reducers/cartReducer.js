@@ -6,6 +6,7 @@ const INITIAL_STATE = {
     transaction_code: '',
     id_address: '',
     item: [],
+    seller_id:''
   },
 };
 
@@ -77,6 +78,7 @@ const cartReducer = (state = INITIAL_STATE, action) => {
           transaction_code: action.payload.transaction_code,
           id_address: action.payload.id_address,
           item: action.payload.item,
+          seller_id: action.payload.seller_id,
         },
       };
     case actionTypes.PICK_CART:
@@ -99,6 +101,8 @@ const cartReducer = (state = INITIAL_STATE, action) => {
         checkout: {
           transaction_code: '',
           item: [],
+          seller_id: '',
+          id_address:'',
         },
       };
     default:

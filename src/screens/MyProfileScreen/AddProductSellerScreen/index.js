@@ -18,6 +18,7 @@ import {Picker} from '@react-native-picker/picker';
 import ActionSheet from 'react-native-actions-sheet';
 import {API_URL} from '@env';
 import {createRef} from 'react';
+import Iconn from 'react-native-vector-icons/Ionicons';
 
 //mock from api
 import response_size_json from './mock-size.json';
@@ -25,6 +26,7 @@ import response_color_json from './mock-color.json';
 
 const sizeSheetRef = createRef();
 const colorSheetRef = createRef();
+const photoSheetRef = createRef();
 
 const AddProduct = ({navigation}) => {
   useEffect(() => {
@@ -225,10 +227,10 @@ const AddProduct = ({navigation}) => {
     console.log('CATEGORY ', ctg);
     formatDataSizeToSend(size).map((element) => {
       data.append('sizes[]', JSON.stringify(element));
-    })
+    });
     formatDataColorToSend(color).map((element) => {
       data.append('colors[]', JSON.stringify(element));
-    })
+    });
     data.append('condition_id', cnd);
     data.append('product_price', prodPrice);
     data.append('product_qty', prodQty);
@@ -243,6 +245,7 @@ const AddProduct = ({navigation}) => {
             ? fileCamera.path
             : fileCamera.path.replace('file://', ''),
       });
+
     for (let i = 0; i < filePath.length; i++) {
       data.append('image', {
         name: filePath[i].path.split('/').pop(),
@@ -326,13 +329,12 @@ const AddProduct = ({navigation}) => {
         </View>
       </ScrollView>
       <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity onPress={pickCamera} style={styles.button}>
-          <Text style={styles.text}>Select Multiple</Text>
-          {size.map((s) => {
-            return s.is_selected ? (
-              <Text key={s.id.toString()}>{s.size}</Text>
-            ) : null;
-          })}
+        <TouchableOpacity
+          onPress={() => {
+            photoSheetRef.current?.setModalVisible();
+          }}
+          style={styles.button}>
+          <Text style={styles.text}>Select Photo</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.input}>
@@ -348,18 +350,89 @@ const AddProduct = ({navigation}) => {
       </View>
 
       <TouchableOpacity
+        style={{
+          elevation: 8,
+          backgroundColor: '#fff',
+          borderRadius: 10,
+          paddingVertical: 5,
+          width: 100,
+          margin: 5,
+        }}
         onPress={() => {
           colorSheetRef.current?.setModalVisible();
         }}>
-        <Text>color</Text>
+        <Text
+          style={{
+            fontSize: 18,
+            color: '#000',
+            fontWeight: 'bold',
+            alignSelf: 'center',
+            textTransform: 'uppercase',
+          }}>
+          Color
+        </Text>
       </TouchableOpacity>
 
+      <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+        {color.map((c) => {
+          return c.is_selected ? (
+            <View
+              style={{
+                height: 40,
+                width: 40,
+                backgroundColor: c.color_hexa,
+                margin: 5,
+                borderRadius: 25,
+              }}></View>
+          ) : null;
+        })}
+      </View>
+
       <TouchableOpacity
+        style={{
+          elevation: 8,
+          backgroundColor: '#fff',
+          borderRadius: 10,
+          paddingVertical: 5,
+          width: 100,
+          margin: 5,
+        }}
         onPress={() => {
           sizeSheetRef.current?.setModalVisible();
         }}>
-        <Text>size</Text>
+        <Text
+          style={{
+            fontSize: 18,
+            color: '#000',
+            fontWeight: 'bold',
+            alignSelf: 'center',
+            textTransform: 'uppercase',
+          }}>
+          Size
+        </Text>
       </TouchableOpacity>
+
+      <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+        {size.map((s) => {
+          return s.is_selected ? (
+            <View
+              style={{
+                width: 40,
+                height: 40,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginHorizontal: 5,
+                borderRadius: 75,
+                backgroundColor: 'white',
+                borderWidth: 1,
+                margin: 5,
+                borderColor: 'red',
+              }}>
+              <Text key={s.id.toString()}>{s.size}</Text>
+            </View>
+          ) : null;
+        })}
+      </View>
 
       <Picker
         style={{width: '100%'}}
@@ -449,7 +522,7 @@ const AddProduct = ({navigation}) => {
             <View style={{justifyContent: 'center'}}>
               <Text
                 style={{alignSelf: 'center', fontSize: 18, fontWeight: 'bold'}}>
-                CATEGORY
+                COLOR
               </Text>
               {color.map(({id, color_name}) => {
                 return (
@@ -493,6 +566,49 @@ const AddProduct = ({navigation}) => {
           </View>
         </ScrollView>
       </ActionSheet>
+
+      <ActionSheet gestureEnabled ref={photoSheetRef}>
+        <View style={{justifyContent: 'center'}}>
+          <Text style={{alignSelf: 'center', fontSize: 18, fontWeight: 'bold'}}>
+            Select Photo With
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              justifyContent: 'space-around',
+            }}>
+            <View
+              style={{
+                justifyContent: 'center',
+                width: '40%',
+                height: 100,
+                padding: 5,
+              }}>
+              <TouchableOpacity onPress={pickCamera}>
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                  <Iconn name="camera-outline" size={40} color="gray" />
+                  <Text style={{fontSize: 20, color: 'black'}}>Camera</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                justifyContent: 'center',
+                width: '40%',
+                height: 100,
+                padding: 5,
+              }}>
+              <TouchableOpacity onPress={pickMultiple}>
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                  <Iconn name="md-image-outline" size={40} color="gray" />
+                  <Text style={{fontSize: 20, color: 'black'}}>Galerry</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </ActionSheet>
       <ButtonSubmit
         title="ADD PRODUCT"
         bg="red"
@@ -507,7 +623,7 @@ const styles = StyleSheet.create({
   selectedItem: {
     padding: 4,
     margin: 4,
-    backgroundColor: 'green',
+    backgroundColor: 'red',
     borderColor: 'black',
     borderWidth: 2,
   },
@@ -523,7 +639,7 @@ const styles = StyleSheet.create({
     // paddingHorizontal: 15,
   },
   button: {
-    backgroundColor: 'red',
+    backgroundColor: 'gray',
     marginBottom: 10,
     height: 40,
     justifyContent: 'center',
@@ -533,6 +649,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     textAlign: 'center',
+    padding: 5,
   },
   input: {
     paddingVertical: 15,

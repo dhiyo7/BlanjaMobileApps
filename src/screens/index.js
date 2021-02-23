@@ -33,6 +33,7 @@ import SuccessScreen from './SuccessScreen';
 
 import ProductSellerScreen from './MyProfileScreen/ProductSellerScreen';
 import AddProductSellerScreen from './MyProfileScreen/AddProductSellerScreen';
+import EditProductSellerScreen from './MyProfileScreen/EditProductSellerScreen';
 import ChatScreen from './ChatScreen';
 
 export {
@@ -66,4 +67,5 @@ export {
   AddProductSellerScreen,
   ChatScreen,
   RatingAndReview,
+  EditProductSellerScreen,
 };

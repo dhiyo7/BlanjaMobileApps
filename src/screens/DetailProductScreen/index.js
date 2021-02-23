@@ -97,7 +97,9 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
             source={
               product.product_photo
                 ? {
-                    uri: `${JSON.parse(product.product_photo).shift()}`,
+                    uri: `${API_URL}${JSON.parse(
+                      product.product_photo,
+                    ).shift()}`,
                     resizeMode: 'contain',
                   }
                 : null
@@ -282,9 +284,7 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
                       <Image
                         // source={require('../../../assets/images/home3.png')}
                         source={{
-                          uri: `${API_URL}${JSON.parse(
-                            product_photo,
-                          ).shift()}`,
+                          uri: `${API_URL}${JSON.parse(product_photo).shift()}`,
                         }}
                         style={{borderRadius: 10, width: 120, height: 170}}
                       />
@@ -337,6 +337,7 @@ const DetailProductScreen = ({navigation, route, addToCart}) => {
                   qty,
                   ukuran,
                   warna,
+                  product.user_id
                 ),
               )
             }>
@@ -403,8 +404,8 @@ const styles = StyleSheet.create({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addToCart: (id, img, name, prc, qty, ukuran, warna) =>
-      dispatch(addToCart(id, img, name, prc, qty, ukuran, warna)),
+    addToCart: (id, img, name, prc, qty, ukuran, warna, sellerId) =>
+      dispatch(addToCart(id, img, name, prc, qty, ukuran, warna, sellerId)),
   };
 };
 export default connect(null, mapDispatchToProps)(DetailProductScreen);

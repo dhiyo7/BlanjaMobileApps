@@ -12,9 +12,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Iconn from 'react-native-vector-icons/Ionicons';
 import {colors} from '../../utils';
 import axios from 'axios';
-import {Rating, AirbnbRating} from 'react-native-ratings';
+// import {Rating, AirbnbRating} from 'react-native-ratings';
 import ActionSheet from 'react-native-actions-sheet';
-import {API_URL} from '@env';
+import {API_URL} from "@env";
+import {Rating} from 'react-native-ratings';
 
 // const BASE_URL = 'http://192.168.1.10:2005';
 const actionSheetRef = createRef();
@@ -194,13 +195,13 @@ export default function CatalogeScreen({navigation, route}) {
                 />
               </View>
               <View style={styles.rating}>
-                <AirbnbRating
-                  count={item.rating}
-                  defaultRating={5}
-                  size={12}
-                  showRating={false}
+                <Rating
+                  ratingCount={5}
+                  startingValue={item.rating}
+                  readonly={true}
+                  imageSize={15}
+                  style={{paddingRight: 5}}
                 />
-
                 <Text children={item.rating} />
               </View>
               <View
