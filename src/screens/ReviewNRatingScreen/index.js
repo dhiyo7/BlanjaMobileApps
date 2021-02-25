@@ -55,7 +55,7 @@ const RatingAndReview = ({route}) => {
             <View style={styles.containerRating}>
               <View style={styles.ratingNum}>
                 <Text style={{fontSize: 44, fontWeight: 'bold'}}>
-                  {data.rating !== undefined && data.rating}
+                  {data.rating !== undefined && Math.round(data.rating, -1)}
                 </Text>
                 <Text>
                   {data.total_user_rating !== undefined &&
@@ -64,9 +64,10 @@ const RatingAndReview = ({route}) => {
               </View>
               <View style={styles.ratingDtl}>
                 {data.rating_detail !== undefined &&
-                  data.rating_detail.map(({rating, total_user}) => {
+                  data.rating_detail.map(({rating, total_user}, index) => {
+                    console.log('rating detail ', index);
                     return (
-                      <View style={styles.rating}>
+                      <View style={styles.rating} key={index}>
                         <View
                           style={{
                             flexDirection: 'row',
@@ -114,8 +115,9 @@ const RatingAndReview = ({route}) => {
 
             {data.review !== undefined &&
               data.review.map(({id, full_name, review}) => {
+                console.log('review ID ', id);
                 return (
-                  <ScrollView style={{width: '100%'}}>
+                  <ScrollView style={{width: '100%'}} key={id}>
                     <View style={{marginTop: 40}}>
                       <View style={styles.cardComent}>
                         <View>
@@ -126,7 +128,6 @@ const RatingAndReview = ({route}) => {
                         </View>
                         <View style={styles.cardContainer}>
                           <Text>{full_name}</Text>
-
                           <Text>{review}</Text>
                         </View>
                       </View>

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import ImagePicker from 'react-native-image-crop-picker';
 import {ButtonSubmit} from '../../../components/index';
 import FormInput from 'react-native-outline-input';
@@ -41,12 +42,11 @@ const EditProduct = ({navigation, route}) => {
   const [fileCamera, setFileCamera] = useState({});
   const [filePath, setFilePath] = useState([]);
 
+  const [ctg, setCtg] = useState();
+  const [cnd, setCnd] = useState(1);
+  const [sts, setSts] = useState(3);
 
-  const [ctg, setCtg] = useState('');
-  const [cnd, setCnd] = useState('');
-  const [sts, setSts] = useState('');
-
-  console.log('Products ', product);
+  // console.log('Products ', product);
 
   const getProductsSellerById = async (itemId) => {
     await axios
@@ -55,9 +55,9 @@ const EditProduct = ({navigation, route}) => {
         const products = res.data.data;
         setProduct(products);
         setProductPhoto(JSON.parse(res.data.data.product_photo));
-        setProductColors(products.colors);
-        setProductSizes(products.sizes);
-        setCtg(products.category_id);
+        setProductColors(restructureIsSelectedtrue(products.colors));
+        setProductSizes(restructureIsSelectedtrue(products.sizes));
+        setCtg(products.category_name);
         setCnd(products.condition_id);
         setSts(products.status_product_id);
       })
@@ -135,6 +135,14 @@ const EditProduct = ({navigation, route}) => {
     return temp;
   };
 
+  const restructureIsSelectedtrue = (data) => {
+    const temp = data.map((data) => {
+      data['is_selected'] = true;
+      return data;
+    });
+    return temp;
+  };
+
   const addOrRemoveSelected = (id) => {
     const result = sizes.find((s) => s.id == id);
     if (result.is_selected) {
@@ -182,7 +190,6 @@ const EditProduct = ({navigation, route}) => {
         selectedSizes.push(s.id);
       }
     });
-    console.log(selectedSizes);
     return selectedSizes;
   };
 
@@ -193,7 +200,6 @@ const EditProduct = ({navigation, route}) => {
         selectedColors.push(c.id);
       }
     });
-    console.log(selectedColors);
     return selectedColors;
   };
 
@@ -204,20 +210,29 @@ const EditProduct = ({navigation, route}) => {
     getStatus();
     getColors();
     getSizes();
+    // handleSizes();
+    // handleColors();
   }, []);
 
-  // useEffect(() => {
-  //   const unsubcribes = navigation.addListener('focus', () => {
-  //     getProductsSellerById(itemId);
-  //     getCategory();
-  //     getCondition();
-  //     getStatus();
-  //     getColors();
-  //     getSizes();
-  //   });
+  const handleSizes = (dataSize) => {
+    const selectedSizes = [];
+    dataSize.forEach((c) => {
+      if (c.is_selected === true) {
+        selectedSizes.push(c.size_id);
+      }
+    });
+    return selectedSizes;
+  };
 
-  //   return unsubcribes;
-  // }, [itemId]);
+  const handleColors = (dataColor) => {
+    const selectedColors = [];
+    dataColor.forEach((c) => {
+      if (c.is_selected === true) {
+        selectedColors.push(c.color_id);
+      }
+    });
+    return selectedColors;
+  };
 
   const pickMultiple = () => {
     ImagePicker.openPicker({
@@ -225,10 +240,11 @@ const EditProduct = ({navigation, route}) => {
       mediaType: 'photo',
     })
       .then((images) => {
-        console.log('ini gambar', images);
         setFilePath(images);
       })
-      .catch((e) => alert(e));
+      .catch((err) => {
+        console.log('ERRRRROR', err);
+      });
   };
 
   const pickCamera = () => {
@@ -239,50 +255,74 @@ const EditProduct = ({navigation, route}) => {
       mediaType: 'photo',
     })
       .then((images) => {
-        console.log('ini gambar', images);
-        // setFileCamera(images);
-        const data = new FormData();
+        setFileCamera(images);
+      })
+      .catch((err) => {
+        console.log('errrrorrr', err);
+      });
+  };
+
+  const handleUpdatePhoto = async () => {
+    const data = new FormData();
+    if (Object.keys(fileCamera).length > 0) {
+      data.append('image', {
+        name: fileCamera.path.split('/').pop(),
+        type: fileCamera.mime,
+        uri:
+          Platform.OS === 'android'
+            ? fileCamera.path
+            : fileCamera.path.replace('file://', ''),
+      });
+    }
+
+    if (filePath[0]) {
+      for (let i = 0; i < filePath.length; i++) {
         data.append('image', {
-          name: images.path.split('/').pop(),
-          type: images.mime,
+          name: filePath[i].path.split('/').pop(),
+          type: filePath[i].mime,
           uri:
             Platform.OS === 'android'
-              ? images.path
-              : images.path.replace('file://', ''),
+              ? filePath[i].path
+              : filePath[i].path.replace('file://', ''),
         });
-
-        axios
-          .put(API_URL + '/products/photo/' + itemId, data, {
-            headers: {
-              'x-access-token': 'Bearer ' + token,
-              'Content-Type': 'multipart/form-data',
-            },
-          })
-          .then((res) => {
-            navigation.navigate('ProductSeller');
-            console.log('bisa update');
-            console.log('aku sayang kamu', data);
-          })
-          .catch((err) => {
-            console.log('error disokin');
-            console.log(err);
-          });
+      }
+    }
+    await axios
+      .put(API_URL + '/products/photo/' + itemId, data, {
+        headers: {
+          'x-access-token': 'Bearer ' + token,
+          'Content-Type': 'multipart/form-data',
+        },
       })
-      .catch((e) => alert(e));
+      .then((res) => {
+        navigation.navigate('ProductSeller');
+      })
+      .catch((err) => {
+        console.log('error disokin');
+        console.log(err);
+      });
   };
 
   const handleUpdate = async () => {
     const data = new URLSearchParams();
     data.append('product_name', product.product_name);
     // data.append('sizes', JSON.stringify(formatDataSizeToSend(sizes)));
-    if (formatDataColorToSend(sizes).length > 0) {
+    if (formatDataSizeToSend(sizes).length > 0) {
       formatDataSizeToSend(sizes).map((element) => {
+        data.append('sizes', element);
+      });
+    } else {
+      handleSizes(productSizes).map((element) => {
         data.append('sizes', element);
       });
     }
     // data.append('colors', JSON.stringify(formatDataColorToSend(colors)));
     if (formatDataColorToSend(colors).length > 0) {
       formatDataColorToSend(colors).map((element) => {
+        data.append('colors', element);
+      });
+    } else {
+      handleColors(productColors).map((element) => {
         data.append('colors', element);
       });
     }
@@ -304,9 +344,14 @@ const EditProduct = ({navigation, route}) => {
         },
       })
       .then((res) => {
+        Toast.show({
+          type: 'success',
+          position: 'top',
+          text1: 'Success update product',
+          visibilityTime: 4000,
+          autoHide: true,
+        });
         navigation.navigate('ProductSeller');
-        console.log('bisa update');
-        console.log('aku sayang kamu', data);
       })
       .catch((err) => {
         console.log('error disokin');
@@ -318,23 +363,30 @@ const EditProduct = ({navigation, route}) => {
       <ScrollView vertical={true}>
         <View>
           <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-            {productPhoto.map((photo) => {
-              return JSON.stringify(fileCamera) === JSON.stringify({}) ? (
-                <Image
-                  key={productPhoto.indexOf(photo)}
-                  source={{
-                    uri: productPhoto.length !== 0 ? photo : ' ',
-                  }}
-                  style={styles.imgStyle}
-                />
-              ) : (
-                <Image
-                  key={1}
-                  source={{uri: fileCamera.path}}
-                  style={styles.imgStyle}
-                />
-              );
-            })}
+            {filePath.length === 0
+              ? productPhoto.map((photo) => {
+                  return (
+                    <Image
+                      key={productPhoto.indexOf(photo)}
+                      source={{
+                        uri: productPhoto.length !== 0 ? API_URL + photo : ' ',
+                      }}
+                      style={styles.imgStyle}
+                    />
+                  );
+                })
+              : filePath.map((item) => {
+                  return (
+                    <Image
+                      key={filePath.indexOf(item)}
+                      source={{
+                        uri: filePath.length !== 0 ? item.path : ' ',
+                      }}
+                      style={styles.imgStyle}
+                    />
+                  );
+                })}
+            <Image source={{uri: fileCamera.path}} style={styles.imgStyle} />
           </View>
         </View>
       </ScrollView>
@@ -351,7 +403,7 @@ const EditProduct = ({navigation, route}) => {
 
       <View style={styles.input}>
         <FormInput
-          value={product.product_name}
+          value={product.product_name + ''}
           label="Name"
           //   secureTextEntry="true"
           onChangeText={(e) => setProduct({...product, product_name: e})}
@@ -378,7 +430,8 @@ const EditProduct = ({navigation, route}) => {
                   backgroundColor: data.color_hexa,
                   margin: 5,
                   borderRadius: 25,
-                }}></View>
+                }}
+                key={data.id}></View>
             );
           })}
         </View>
@@ -428,7 +481,8 @@ const EditProduct = ({navigation, route}) => {
                   borderWidth: 1,
                   margin: 5,
                   borderColor: 'red',
-                }}>
+                }}
+                key={data.id}>
                 <Text
                   children={data.size}
                   style={{
@@ -466,39 +520,51 @@ const EditProduct = ({navigation, route}) => {
         </TouchableOpacity>
       </View>
 
-      <Picker
-        style={{width: '100%'}}
-        mode="dialog"
-        selectedValue={ctg}
-        onValueChange={(itemValue) => {
-          setCtg(itemValue);
-        }}>
-        <Picker.Item label="Category" />
-        {categories.map((data, index) => {
-          return (
-            <Picker.Item
-              key={index}
-              label={data.category_name}
-              value={data.id_categories}
-            />
-          );
-        })}
-      </Picker>
+      <View style={styles.picker}>
+        <Text style={styles.label}>Category</Text>
+        <View style={{margin: 10, elevation: 1, borderWidth: 1}}>
+          <Picker
+            style={{width: '100%'}}
+            mode="dropdown"
+            selectedValue={ctg}
+            onValueChange={(itemValue) => {
+              setCtg(itemValue);
+            }}>
+            {categories.map((data, index) => {
+              return (
+                <Picker.Item
+                  key={index}
+                  label={data.category_name}
+                  value={data.id_categories}
+                />
+              );
+            })}
+          </Picker>
+        </View>
+      </View>
 
-      <Picker
-        style={{width: '100%'}}
-        mode="dialog"
-        selectedValue={cnd}
-        onValueChange={(itemValue) => {
-          setCnd(itemValue);
-        }}>
-        <Picker.Item label="Condition" />
-        {conditions.map((data, index) => {
-          return (
-            <Picker.Item key={index} label={data.conditions} value={data.id} />
-          );
-        })}
-      </Picker>
+      <View style={styles.picker}>
+        <Text style={styles.label}>Condition</Text>
+        <View style={{margin: 10, elevation: 1, borderWidth: 1}}>
+          <Picker
+            style={{width: '100%'}}
+            mode="dialog"
+            selectedValue={cnd}
+            onValueChange={(itemValue) => {
+              setCnd(itemValue);
+            }}>
+            {conditions.map((data, index) => {
+              return (
+                <Picker.Item
+                  key={index}
+                  label={data.conditions}
+                  value={data.id}
+                />
+              );
+            })}
+          </Picker>
+        </View>
+      </View>
 
       <View style={styles.input}>
         <FormInput
@@ -526,7 +592,7 @@ const EditProduct = ({navigation, route}) => {
 
       <View style={styles.input}>
         <FormInput
-          value={product.product_desc}
+          value={product.product_desc + ''}
           onChangeText={(e) => setProduct({...product, product_desc: e})}
           label="Description"
           passiveBorderColor="white"
@@ -536,18 +602,24 @@ const EditProduct = ({navigation, route}) => {
         />
       </View>
 
-      <Picker
-        style={{width: '100%'}}
-        mode="dialog"
-        selectedValue={sts}
-        onValueChange={(itemValue) => {
-          setSts(itemValue);
-        }}>
-        <Picker.Item label="Condition" />
-        {status.map((data, index) => {
-          return <Picker.Item key={index} label={data.name} value={data.id} />;
-        })}
-      </Picker>
+      <View style={styles.picker}>
+        <Text style={styles.label}>Status product</Text>
+        <View style={{margin: 10, elevation: 1, borderWidth: 1}}>
+          <Picker
+            style={{width: '100%'}}
+            mode="dialog"
+            selectedValue={sts}
+            onValueChange={(itemValue) => {
+              setSts(itemValue);
+            }}>
+            {status.map((data, index) => {
+              return (
+                <Picker.Item key={index} label={data.name} value={data.id} />
+              );
+            })}
+          </Picker>
+        </View>
+      </View>
 
       <ActionSheet gestureEnabled ref={colorSheetRef}>
         <ScrollView>
@@ -555,7 +627,7 @@ const EditProduct = ({navigation, route}) => {
             <View style={{justifyContent: 'center'}}>
               <Text
                 style={{alignSelf: 'center', fontSize: 18, fontWeight: 'bold'}}>
-                CATEGORY
+                COLOR
               </Text>
               {colors.map(({id, color_name}) => {
                 return (
@@ -647,7 +719,10 @@ const EditProduct = ({navigation, route}) => {
         title="ADD PRODUCT"
         bg="red"
         rippleColor="white"
-        onPress={handleUpdate}
+        onPress={() => {
+          handleUpdate();
+          handleUpdatePhoto();
+        }}
       />
     </ScrollView>
   );
@@ -656,7 +731,7 @@ const styles = StyleSheet.create({
   selectedItem: {
     padding: 4,
     margin: 4,
-    backgroundColor: 'green',
+    backgroundColor: 'red',
     borderColor: 'black',
     borderWidth: 2,
   },
@@ -693,6 +768,15 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderRadius: 5,
     borderWidth: 1,
+  },
+  picker: {
+    backgroundColor: 'white',
+    marginVertical: 15,
+  },
+  label: {
+    paddingLeft: '2%',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });
 export default EditProduct;

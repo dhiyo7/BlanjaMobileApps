@@ -19,10 +19,7 @@ import ActionSheet from 'react-native-actions-sheet';
 import {API_URL} from '@env';
 import {createRef} from 'react';
 import Iconn from 'react-native-vector-icons/Ionicons';
-
-//mock from api
-import response_size_json from './mock-size.json';
-import response_color_json from './mock-color.json';
+import Toast from 'react-native-toast-message';
 
 const sizeSheetRef = createRef();
 const colorSheetRef = createRef();
@@ -131,8 +128,8 @@ const AddProduct = ({navigation}) => {
     return selectedColors;
   };
 
-  const getCategory = async () => {
-    await axios
+  const getCategory = () => {
+    axios
       .get(BASE_URL + '/categories')
       .then((res) => {
         const categories = res.data.data;
@@ -144,8 +141,8 @@ const AddProduct = ({navigation}) => {
       });
   };
 
-  const getSize = async () => {
-    await axios
+  const getSize = () => {
+    axios
       .get(BASE_URL + '/sizes')
       .then((res) => {
         // const size = res.data.data.filter((item) => {
@@ -165,8 +162,8 @@ const AddProduct = ({navigation}) => {
       });
   };
 
-  const getColor = async () => {
-    await axios
+  const getColor = () => {
+    axios
       .get(BASE_URL + '/colors')
       .then((res) => {
         const color = res.data.data;
@@ -180,8 +177,8 @@ const AddProduct = ({navigation}) => {
       });
   };
 
-  const getCondition = async () => {
-    await axios
+  const getCondition = () => {
+    axios
       .get(BASE_URL + '/condition')
       .then((res) => {
         const condition = res.data.data;
@@ -193,8 +190,8 @@ const AddProduct = ({navigation}) => {
       });
   };
 
-  const getStatus = async () => {
-    await axios
+  const getStatus = () => {
+    axios
       .get(BASE_URL + '/status')
       .then((res) => {
         const status = res.data.data;
@@ -236,7 +233,7 @@ const AddProduct = ({navigation}) => {
     data.append('product_qty', prodQty);
     data.append('product_desc', prodDesc);
     // data.append('image', image);
-    fileCamera !== 0 &&
+    if (Object.keys(fileCamera).length > 0) {
       data.append('image', {
         name: fileCamera.path.split('/').pop(),
         type: fileCamera.mime,
@@ -245,16 +242,19 @@ const AddProduct = ({navigation}) => {
             ? fileCamera.path
             : fileCamera.path.replace('file://', ''),
       });
+    }
 
-    for (let i = 0; i < filePath.length; i++) {
-      data.append('image', {
-        name: filePath[i].path.split('/').pop(),
-        type: filePath[i].mime,
-        uri:
-          Platform.OS === 'android'
-            ? filePath[i].path
-            : filePath[i].path.replace('file://', ''),
-      });
+    if (filePath[0]) {
+      for (let i = 0; i < filePath.length; i++) {
+        data.append('image', {
+          name: filePath[i].path.split('/').pop(),
+          type: filePath[i].mime,
+          uri:
+            Platform.OS === 'android'
+              ? filePath[i].path
+              : filePath[i].path.replace('file://', ''),
+        });
+      }
     }
     data.append('status_product_id', sts);
     console.log(data);
@@ -266,15 +266,14 @@ const AddProduct = ({navigation}) => {
         },
       })
       .then((res) => {
-        // Alert.alert('Success', 'Product Berhasil Ditambahkan', [
-        //   {
-        //     text: 'OK',
-        //     onPress: () => navigation.navigate('ProductSeller'),
-        //   },
-        // ]);
+        Toast.show({
+          type: 'success',
+          position: 'top',
+          text1: 'Success add product',
+          visibilityTime: 4000,
+          autoHide: true,
+        });
         navigation.navigate('ProductSeller');
-        console.log('bisa post');
-        console.log('aku sayang kamu', data);
       })
       .catch((err) => {
         console.log('error disokin');
@@ -292,7 +291,7 @@ const AddProduct = ({navigation}) => {
       mediaType: 'photo',
     })
       .then((images) => {
-        console.log('ini gambar', images);
+        console.log('ini gambar galeri', images);
         setFilePath(images);
       })
       .catch((e) => alert(e));
@@ -306,10 +305,12 @@ const AddProduct = ({navigation}) => {
       mediaType: 'photo',
     })
       .then((images) => {
-        console.log('ini gambar', images);
+        console.log('ini gambar camera', images);
         setFileCamera(images);
       })
-      .catch((e) => alert(e));
+      .catch((err) => {
+        console.log('ERRROR', err);
+      });
   };
 
   return (
@@ -383,7 +384,8 @@ const AddProduct = ({navigation}) => {
                 backgroundColor: c.color_hexa,
                 margin: 5,
                 borderRadius: 25,
-              }}></View>
+              }}
+              key={c.id}></View>
           ) : null;
         })}
       </View>
@@ -427,7 +429,8 @@ const AddProduct = ({navigation}) => {
                 borderWidth: 1,
                 margin: 5,
                 borderColor: 'red',
-              }}>
+              }}
+              key={s.id}>
               <Text key={s.id.toString()}>{s.size}</Text>
             </View>
           ) : null;

@@ -160,10 +160,14 @@ const MyOrders = ({navigation}) => {
                 status_order,
               }) => {
                 return (
-                  <TouchableOpacity style={styles.card}>
-                    {/* onPress={() => navigation.navigate('OrderDetails',{itemId:id})} key={id} */}
+                  <TouchableOpacity
+                    style={styles.card}
+                    onPress={() =>
+                      navigation.navigate('OrderStatus', {itemId: id})
+                    }
+                    key={id}>
                     <View
-                    key={id}
+                      key={id}
                       style={{
                         flexDirection: 'row',
                         justifyContent: 'space-between',

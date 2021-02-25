@@ -103,8 +103,10 @@ const MainProfileScreen = () => {
 };
 
 const StackScreen = ({navigation}) => {
+  const user_id = useSelector((state) => state.authReducer.user_id);
+
   return (
-    <SocketProvider>
+    <SocketProvider id={user_id}>
       <Stack.Navigator>
         <Stack.Screen
           initialRouteName="Splash"
@@ -211,9 +213,9 @@ const StackScreen = ({navigation}) => {
         <Stack.Screen
           name="Chat"
           component={ChatScreen}
-          options={{
-            headerShown: false,
-          }}
+          // options={{
+          //   headerShown: false,
+          // }}
         />
         <Stack.Screen
           name="Shipping address"
